@@ -14,7 +14,7 @@
  * @param {Array}
  */
 
- function head([first]) {
+function head([first]) {
   return first;
 }
 
@@ -76,6 +76,7 @@ function reduce(func, [current, ...rest], initial = []) {
  * Takes an array and reverses the order of it. Extract first `current` value and
  * recursively calls `reverse` until there are no more values.
  * @param {Array}
+ * @returns {Array} new array
  */
 
 function reverse([current, ...rest]) {
@@ -83,6 +84,58 @@ function reverse([current, ...rest]) {
     return [];
   }
   return [...reverse(rest), current];
+}
+
+/**
+ * Takes an array and returns the last element of that array;
+ * @param {Array} arr
+ */
+
+function pop(arr) {
+  return head(reverse(arr));
+}
+
+/**
+ * Takes an array and a value to push to end of the list and returns a new array.
+ * @param {Array} arr
+ * @param {any} val
+ * @returns {Array} new array
+ */
+
+function push(arr, val) {
+  if (val === undefined) {
+    return [...arr];
+  }
+  return [...arr, val];
+}
+
+/**
+ * Takes any number of arguments after the first array arg and insert it to the
+ * beginning of the list.
+ * @param {Array} arr 
+ * @param  {...any} rest 
+ */
+
+function unshift(arr, ...rest) {
+  return [...rest, ...arr];
+}
+
+/**
+ * Takes an array and a callback function to check if any value within the array
+ * returns truthy.
+ * @param {Function} func
+ * @param {Array}
+ * @returns {Boolean}
+ */
+
+function some(func, [current, ...rest]) {
+  if (current === undefined) {
+    return false;
+  }
+  if (func(current)) {
+    return true;
+  }
+  return some(func, rest);
 }
 
 /**
@@ -106,6 +159,23 @@ function first([current, ...rest], num = 1) {
 
 function last(arr, num = 1) {
   return first(reverse(arr), num);
+}
+
+/**
+ * Takes an array, a value and tries to return the index of the value within
+ * the array.
+ * @param {Array} arr
+ * @param {any} val
+ */
+
+function indexOf(arr, val) {
+  const idxOf = ([current, ...rest], i) => {
+    if (current === undefined) {
+      return -1;
+    }
+    return current === val ? i : idxOf(rest, i + 1);
+  };
+  return idxOf(arr, 0);
 }
 
 /**
