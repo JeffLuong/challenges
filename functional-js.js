@@ -1,10 +1,12 @@
+'use strict'
+
 /**
- * Javascript versions of some functional programming concepts. Some of these are pure
+ * Javascript versions of some functional programming concepts. Most of these are pure
  * functions because they do not hold a `state` (i.e. does not iterate over index)
  * and also do not mutate any inputs or outputs or global state when called.
  *
  * Note: These functions were written as an exercise on recursion and functional programming.
- * The functionality of these are already array prototype functions.
+ * The functionality of many of these already exist as array prototype functions.
  */
 
 /**
@@ -31,11 +33,14 @@ function tail([, ...rest]) {
  * @param {Array}
  */
 
-function map(func, [current, ...rest]) {
-  if (current === undefined) {
-    return [];
-  }
-  return [func(current), ...map(func, [...rest])];
+function map(func, arr) {
+  const mapIt = ([current, ...rest], idx) => {
+    if (current === undefined) {
+      return [];
+    }
+    return [func(current, idx), ...mapIt([...rest], idx + 1)];
+  };
+  return mapIt(arr, 0);
 }
 
 /**
@@ -81,6 +86,97 @@ function reverse([current, ...rest]) {
 }
 
 /**
+ * Takes the first n number of items within an array.
+ * @param {Array}
+ * @param {*} num 
+ */
+
+function first([current, ...rest], num = 1) {
+  if (current === undefined || num == 0) {
+    return [];
+  }
+  return [current, ...first(rest, num - 1)];
+}
+
+/**
+ * Takes the last n number of items within an array.
+ * @param {Array} arr 
+ * @param {Number} num 
+ */
+
+function last(arr, num = 1) {
+  return first(reverse(arr), num);
+}
+
+/**
+ * Takes an array and 2 number index arguments to indicate which indexes to swap values
+ * within that array.
+ * @param {Array} arr 
+ * @param {Number} idx1 
+ * @param {Number} idx2 
+ */
+
+function swap(arr, idx1, idx2) {
+  return map((c, i) => {
+    if (i === idx1) {
+      return arr[idx2];
+    }
+    if (i === idx2) {
+      return arr[idx1];
+    }
+    return c;
+  }, arr);
+}
+
+/**
+ * Takes an array and recursively executes an equality check the current value with a value argument.
+ * @param {Array}
+ * @param {any}
+ */
+
+function includes([current, ...rest], value) {
+  if (current === undefined) {
+    return false;
+  }
+  return current === value || includes(rest);
+}
+
+/**
+ * Takes an array and recursively calls the callback function in order to return values that
+ * the callback deems truthy.
+ * @param {Function} func
+ * @param {Array}
+ */
+
+function filter(func, [current, ...rest]) {
+  if (current === undefined) {
+    return [];
+  }
+  if (func(current)) {
+    return [current, ...filter(func, rest)];
+  }
+  return [...filter(func, rest)];
+}
+
+/**
+ * Takes an array, coerces all it's values and joins them utilizing a separator argument.
+ * @param {Array} arr 
+ * @param {String} joinVal 
+ */
+
+function join(arr, joinVal = ',') {
+  const joinIt = ([current, ...rest], val, curr) => {
+    if (current === undefined) {
+      return '';
+    }
+    return curr === length(arr) - 1 ?
+      `${current}` :
+      `${current}${val}${joinIt(rest, val, curr + 1)}`;
+  }
+  return joinIt(arr, joinVal, 0)
+}
+
+/**
  * Takes an array and recursively calls an internally scoped slice on it. This internal
  * private slice function is passed an additional argument that holds the current index.
  * @param {Array} arr 
@@ -89,7 +185,7 @@ function reverse([current, ...rest]) {
  */
 
 function slice(arr, start, end) {
-  function sliceIt([current, ...rest], s, e, curr) {
+  const sliceIt = ([current, ...rest], s, e, curr) => {
     if (current === undefined || (e && e < curr)) {
       return [];
     }
@@ -109,7 +205,7 @@ function slice(arr, start, end) {
  */
 
 function splice(arr, start, delCount = 0, insert) {
-  function spliceIt([current, ...rest], s, d, i, curr) {
+  const spliceIt = ([current, ...rest], s, d, i, curr) => {
     if (current === undefined) {
       return i && (s >= curr) ? [i] : [];
     }
