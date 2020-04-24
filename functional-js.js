@@ -85,7 +85,7 @@ function reverse([current, ...rest]) {
  * private slice function is passed an additional argument that holds the current index.
  * @param {Array} arr 
  * @param {Number} start 
- * @param {Number} end 
+ * @param {Number} end (optional)
  */
 
 function slice(arr, start, end) {
@@ -98,4 +98,34 @@ function slice(arr, start, end) {
       [current, ...sliceIt(rest, s, e, curr + 1)];
   }
   return start === undefined ? arr : sliceIt(arr, start, end, 0);
+}
+
+/**
+ * Takes a string, a start index, number of elements to delete and an element to insert.
+ * @param {Array} arr 
+ * @param {Number} start 
+ * @param {Number} delCount (optional)
+ * @param {any} insert (optional)
+ */
+
+function splice(arr, start, delCount = 0, insert) {
+  function spliceIt([current, ...rest], s, d, i, curr) {
+    if (current === undefined) {
+      return i && (s >= curr) ? [i] : [];
+    }
+    if (curr === s) {
+      if (d > 0) {
+        return i ?
+          [i, ...spliceIt(rest, s, d - 1, null, curr + 1)] :
+          [...spliceIt(rest, s, d - 1, null, curr + 1)];
+      }
+      return i ?
+        [i, current, ...spliceIt(rest, s, d, null, curr + 1)] :
+        [current, ...spliceIt(rest, s, d, i, curr + 1)];
+    }
+    return d > 0 && curr > s ?
+      [...spliceIt(rest, s, d - 1, i, curr + 1)]:
+      [current, ...spliceIt(rest, s, d, i, curr + 1)];
+  }
+  return spliceIt(arr, start, delCount, insert, 0);
 }
