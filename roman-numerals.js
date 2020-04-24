@@ -62,3 +62,46 @@
     }
   }).join('');
 }
+
+/**
+ * More recursive way to solve for the same question. Similar in concept as above solution.
+ * @param {Number} int 
+ */
+
+ function _intToRoman(int) {
+  function toRoman(i, romanVals) {
+    if (curr === undefined || i === 0) {
+      return [];
+    }
+    const [curr, ...rest] = romanVals;
+    const dec = Math.floor(i / curr);
+    const rem = i % curr;
+    if (i >= curr && rem >= 0 && dec >= 0) {
+      const pushedCurr = [];
+      for (let j = 0; j < dec; j++) {
+        pushedCurr.push(curr);
+      }
+      return [...pushedCurr, ...toRoman(rem, romanVals)];
+    }
+    return [...toRoman(rem, rest)];
+  }
+  return toRoman(int, [1000, 500, 100, 50, 10, 5, 1], 0)
+    .map(num => {
+      switch(num) {
+        case 1000:
+          return 'M';
+        case 500:
+          return 'D';
+        case 100:
+          return 'C';
+        case 50:
+          return 'L';
+        case 10:
+          return 'X';
+        case 5:
+          return 'V';
+        case 1:
+          return 'I';
+      }
+    }).join('');
+}
