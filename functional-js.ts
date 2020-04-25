@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * Javascript versions of some functional programming concepts. Most of these are pure
  * functions because they do not hold a `state` (i.e. does not iterate over index)
@@ -14,7 +12,7 @@
  * @param {Array}
  */
 
-function head([first]) {
+function head([first]: any[]): any {
   return first;
 }
 
@@ -23,7 +21,7 @@ function head([first]) {
  * @param {Array}
  */
 
-function tail([, ...rest]) {
+function tail([, ...rest]: any[]): any {
   return rest;
 }
 
@@ -33,8 +31,8 @@ function tail([, ...rest]) {
  * @param {Array}
  */
 
-function map(func, arr) {
-  const mapIt = ([current, ...rest], idx) => {
+function map(func: (c: any, i: number) => any, arr: any[]): any {
+  const mapIt = ([current, ...rest]: any[], idx: number): any[] => {
     if (current === undefined) {
       return [];
     }
@@ -49,11 +47,11 @@ function map(func, arr) {
  * @param {Array}
  */
 
-function length([current, ...rest]) {
+function len([current, ...rest]: any[]): number {
   if (current === undefined) {
     return 0;
   }
-  return 1 + length(rest);
+  return 1 + len(rest);
 }
 
 /**
@@ -65,11 +63,11 @@ function length([current, ...rest]) {
  * @param {*} initial 
  */
 
-function reduce(func, [current, ...rest], initial = []) {
-  if (current === undefined) {
-    return initial
+function reduce(func: (acc: any, val: any) => any, [curr, ...rest]: any[], init: any = []): any {
+  if (curr === undefined) {
+    return init
   }
-  return reduce(func, rest, func(initial, current));
+  return reduce(func, rest, func(init, curr));
 }
 
 /**
@@ -79,7 +77,7 @@ function reduce(func, [current, ...rest], initial = []) {
  * @returns {Array} new array
  */
 
-function reverse([current, ...rest]) {
+function reverse([current, ...rest]: any[]): any[] {
   if (current === undefined) {
     return [];
   }
@@ -91,7 +89,7 @@ function reverse([current, ...rest]) {
  * @param {Array} arr
  */
 
-function pop(arr) {
+function pop(arr: any[]): any {
   return head(reverse(arr));
 }
 
@@ -102,7 +100,7 @@ function pop(arr) {
  * @returns {Array} new array
  */
 
-function push(arr, val) {
+function push(arr: any[], val: any): any[] {
   if (val === undefined) {
     return [...arr];
   }
@@ -116,7 +114,7 @@ function push(arr, val) {
  * @param  {...any} rest 
  */
 
-function unshift(arr, ...rest) {
+function unshift(arr: any[], ...rest: any[]): any[] {
   return [...rest, ...arr];
 }
 
@@ -128,7 +126,7 @@ function unshift(arr, ...rest) {
  * @returns {Boolean}
  */
 
-function some(func, [current, ...rest]) {
+function some(func: ((c: any) => boolean), [current, ...rest]: any[]): boolean {
   if (current === undefined) {
     return false;
   }
@@ -144,7 +142,7 @@ function some(func, [current, ...rest]) {
  * @param {*} num 
  */
 
-function first([current, ...rest], num = 1) {
+function first([current, ...rest]: any[], num: number = 1): any[] {
   if (current === undefined || num == 0) {
     return [];
   }
@@ -157,7 +155,7 @@ function first([current, ...rest], num = 1) {
  * @param {Number} num 
  */
 
-function last(arr, num = 1) {
+function last(arr: any[], num: number = 1): any[] {
   return first(reverse(arr), num);
 }
 
@@ -168,8 +166,8 @@ function last(arr, num = 1) {
  * @param {any} val
  */
 
-function indexOf(arr, val) {
-  const idxOf = ([current, ...rest], i) => {
+function indexOf(arr: any[], val?: number): number {
+  const idxOf = ([current, ...rest]: any[], i: number): number => {
     if (current === undefined) {
       return -1;
     }
@@ -186,7 +184,7 @@ function indexOf(arr, val) {
  * @param {Number} idx2 
  */
 
-function swap(arr, idx1, idx2) {
+function swap(arr: any[], idx1: number, idx2: number): any[] {
   return map((c, i) => {
     if (i === idx1) {
       return arr[idx2];
@@ -204,11 +202,11 @@ function swap(arr, idx1, idx2) {
  * @param {any}
  */
 
-function includes([current, ...rest], value) {
+function includes([current, ...rest]: any[], value: any): boolean {
   if (current === undefined) {
     return false;
   }
-  return current === value || includes(rest);
+  return current === value || includes(rest, value);
 }
 
 /**
@@ -218,7 +216,7 @@ function includes([current, ...rest], value) {
  * @param {Array}
  */
 
-function filter(func, [current, ...rest]) {
+function filter(func: ((c: any) => boolean), [current, ...rest]: any[]): any[] {
   if (current === undefined) {
     return [];
   }
@@ -234,12 +232,12 @@ function filter(func, [current, ...rest]) {
  * @param {String} joinVal 
  */
 
-function join(arr, joinVal = ',') {
-  const joinIt = ([current, ...rest], val, curr) => {
+function join(arr: any[], joinVal: string = ','): string {
+  const joinIt = ([current, ...rest]: any[], val: any, curr: number): string => {
     if (current === undefined) {
       return '';
     }
-    return curr === length(arr) - 1 ?
+    return curr === len(arr) - 1 ?
       `${current}` :
       `${current}${val}${joinIt(rest, val, curr + 1)}`;
   }
@@ -254,8 +252,8 @@ function join(arr, joinVal = ',') {
  * @param {Number} end (optional)
  */
 
-function slice(arr, start, end) {
-  const sliceIt = ([current, ...rest], s, e, curr) => {
+function slice(arr: any[], start: number, end: number): any[] {
+  const sliceIt = ([current, ...rest]: any[], s: number, e: number, curr: number): any[] => {
     if (current === undefined || (e && e < curr)) {
       return [];
     }
@@ -274,8 +272,8 @@ function slice(arr, start, end) {
  * @param {any} insert (optional)
  */
 
-function splice(arr, start, delCount = 0, insert) {
-  const spliceIt = ([current, ...rest], s, d, i, curr) => {
+function splice(arr: any[], start: number, delCount: number = 0, insert: any): any[] {
+  const spliceIt = ([current, ...rest]: any[], s: number, d: number, i: number | null, curr: number): any[] => {
     if (current === undefined) {
       return i && (s >= curr) ? [i] : [];
     }
