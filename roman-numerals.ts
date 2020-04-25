@@ -3,8 +3,8 @@
  * @param {Number} int 
  */
 
-function mapToRomans(int) {
-  switch(int) {
+function mapToRomans(i: number): string {
+  switch(i) {
     case 1000:
       return 'M';
     case 500:
@@ -27,7 +27,7 @@ function mapToRomans(int) {
  * @param {number} int 
  */
 
- function intToRoman(int) {
+ function intToRoman(int: number): string {
   // Roman numeral values in int form:
   const romVals = [1, 5, 10, 50, 100, 500, 1000];
   // List of roman numeral values to concat into string:
@@ -75,24 +75,26 @@ function mapToRomans(int) {
  * @param {Number} int 
  */
 
- function _intToRoman(int) {
-  function toRoman(i, romanVals) {
+function _intToRoman(int: number): string {
+  function toRoman(i: number, romanVals: number[]): number[] {
+    const [curr, ...rest] = romanVals;
     if (curr === undefined || i === 0) {
       return [];
     }
-    const [curr, ...rest] = romanVals;
+    // Number of times `curr` value needs to be repeated (i.e. 25 requires 2 tens)
     const dec = Math.floor(i / curr);
+    // Remainder of the int (i.e. 25 has remainder of 5)
     const rem = i % curr;
     if (i >= curr && rem >= 0 && dec >= 0) {
       const pushedCurr = [];
       for (let j = 0; j < dec; j++) {
         pushedCurr.push(curr);
       }
-      return [...pushedCurr, ...toRoman(rem, romanVals)];
+      return [...pushedCurr, ...toRoman(rem, romanVals)]; // pass in remainder as next int
     }
-    return [...toRoman(rem, rest)];
+    return [...toRoman(rem, rest)]; // pass in remainder as next int
   }
-  return toRoman(int, [1000, 500, 100, 50, 10, 5, 1], 0)
+  return toRoman(int, [1000, 500, 100, 50, 10, 5, 1])
     .map(mapToRomans)
     .join('');
 }
