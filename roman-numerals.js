@@ -1,4 +1,28 @@
 /**
+ * Returns associated roman numeral based on arabaic number argument.
+ * @param {Number} int 
+ */
+
+function mapToRomans(int) {
+  switch(int) {
+    case 1000:
+      return 'M';
+    case 500:
+      return 'D';
+    case 100:
+      return 'C';
+    case 50:
+      return 'L';
+    case 10:
+      return 'X';
+    case 5:
+      return 'V';
+    default:
+      return 'I';
+  }
+}
+
+/**
  * Converts a number to a roman numeral string
  * @param {number} int 
  */
@@ -43,24 +67,7 @@
     }
   }
 
-  return romanInts.map(int => {
-    switch(int) {
-      case 1000:
-        return 'M';
-      case 500:
-        return 'D';
-      case 100:
-        return 'C';
-      case 50:
-        return 'L';
-      case 10:
-        return 'X';
-      case 5:
-        return 'V';
-      case 1:
-        return 'I';
-    }
-  }).join('');
+  return romanInts.map(mapToRomans).join('');
 }
 
 /**
@@ -86,22 +93,6 @@
     return [...toRoman(rem, rest)];
   }
   return toRoman(int, [1000, 500, 100, 50, 10, 5, 1], 0)
-    .map(num => {
-      switch(num) {
-        case 1000:
-          return 'M';
-        case 500:
-          return 'D';
-        case 100:
-          return 'C';
-        case 50:
-          return 'L';
-        case 10:
-          return 'X';
-        case 5:
-          return 'V';
-        case 1:
-          return 'I';
-      }
-    }).join('');
+    .map(mapToRomans)
+    .join('');
 }
