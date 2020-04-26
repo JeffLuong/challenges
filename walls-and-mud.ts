@@ -43,7 +43,7 @@ function maxHeight(wPositions: number[], wHeights: number[]): number {
   }
 
   const positions = Object.keys(walls).map(k => Number.parseInt(k));
-  const heights = Object.values(walls).map(v => v);
+  const heights = Object.values(walls);
   const groupedPos = [];
   const groupedHts = [];
   const mudHeights = [];
