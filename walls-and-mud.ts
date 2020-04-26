@@ -16,6 +16,7 @@
  * +-++-++-++-++-++-+
  *
  * `W` denotes a wall while `M` denotes a mud segment. The numbers at the top denote heights.
+ * This example's output will be 4.
  *
  * Below are some assumptions:
  * - Both given arrays are always the same length.
