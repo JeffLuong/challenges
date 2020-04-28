@@ -1,5 +1,17 @@
 import { isObject } from './utils/object';
 
+/**
+ * Create an auto-complete feature where given a string, you can get back
+ * a list of potential words that may complete the string. For example:
+ *
+ * Given the string 'app' there could be the following words:
+ * ['apple', 'application', 'apply', 'appreciate', ...etc]
+ *
+ * A pre-requisite for this challenge is to create a dictionary of words
+ * so that your `autoComplete()` function can search through it for the
+ * available words.
+ */
+
 type Dictionary = {
   // Need to better type this trie :(
   [letter: string]: any,
