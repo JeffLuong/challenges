@@ -1,11 +1,4 @@
-/**
- * Checks if the passed in argument is an object
- * @param {any} o
- */
-
-function isObject(o: any): boolean {
-  return o.constructor.name === 'Object';
-}
+import { isObject } from './utils/object';
 
 /**
  * Takes an object and iterate through a path of keys to set a passed in value.
