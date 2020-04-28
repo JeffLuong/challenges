@@ -1,12 +1,17 @@
 import { isObject } from './utils/object';
 
 type Dictionary = {
-  // Can't figure out a good way to type this since the data structure
-  // is either a recursive `Dictionary` type or number...
+  // Need to better type this trie :(
   [letter: string]: any,
  } | any;
 
 const dictionary: Dictionary = {};
+
+/**
+ * Adds a string to the dictionary
+ * @param str
+ * @param dic
+ */
 
 function addToDictionary(str: string, dic: Dictionary): Dictionary {
   const arr = str.split('');
@@ -22,8 +27,17 @@ function addToDictionary(str: string, dic: Dictionary): Dictionary {
     }
     currNode = currNode[arr[i]];
   }
+
   return dic;
 }
+
+/**
+ * Takes a node and an accumulated string (if any) and finds all leaves for the node,
+ * diving deeper into the trie in order to pull out the possible words - concatanating
+ * them with the initla accumulated string.
+ * @param str
+ * @param dic
+ */
 
 function dive(node: Dictionary, str: string = ''): string[] {
   if (!node || node === 1) {
@@ -41,7 +55,13 @@ function dive(node: Dictionary, str: string = ''): string[] {
   return res;
 }
 
-function search(str: string, dic: Dictionary) {
+/**
+ * Takes an initial string and follows the letters into the trie. If the string
+ * exists, dive into the latest node to get all possibilities.
+ * @param str
+ * @param dic
+ */
+function search(str: string, dic: Dictionary): string[] {
   const arr = str.split('');
 
   if (!arr.length || !dic) {
