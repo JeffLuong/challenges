@@ -38,7 +38,7 @@ class Trie {
    * @param charArray
    * @param node
    */
-  private findNode([char, ...rest]: string[], node: TNode = this.root): TNode | null {
+  private _findNode([char, ...rest]: string[], node: TNode = this.root): TNode | null {
     if (char === undefined) {
       return node;
     }
@@ -50,7 +50,16 @@ class Trie {
       return null;
     }
 
-    return this.findNode(rest, nextNode);
+    return this._findNode(rest, nextNode);
+  }
+
+  /**
+   * Public interface of `_findNode()` which is called after splitting the string argument.
+   * This is to avoid having to split it recursively within `_findNode()`.
+   * @param word
+   */
+  public findNode(word: string): TNode | null {
+    return this._findNode(word.split(''));
   }
 
   /**
@@ -59,7 +68,7 @@ class Trie {
    * @param node
    * @param str
    */
-  private getPossibleOptions(node: TNode, str: string): string[] {
+  public getPossibleOptions(node: TNode, str: string): string[] {
     if (node.children.size === 0) {
       return [str];
     }
@@ -104,20 +113,56 @@ class Trie {
   }
 
   /**
+   * Marks the passed in word as 'not end of word' if it exists.
+   * @param word
+   */
+  public remove(word: string): void {
+    const node = this.findNode(word);
+    if (node) {
+      node.end = false;
+    }
+  }
+
+  /**
+   * Finds the last node of a string - if it is marked as an end of a word,
+   * it will return true, otherwise it will be false if it isn't marked or
+   * if the node doesn't exist.
+   * @param word
+   */
+  public search(word: string): boolean {
+    const node = this.findNode(word);
+    return node ? node.end : false;
+  }
+
+  /**
    * Returns the potential options from a given string.
    * @param word
    */
   public autoComplete(word: string): string[] {
-    const node = this.findNode(word.split(''));
+    const node = this.findNode(word);
     return node && this.getPossibleOptions(node, word) || [];
   }
 }
 
 const dictionary = new Trie();
 
+// Some logging tests:
+console.log(dictionary.search('apply'));
+console.log(dictionary.search('apple'));
+console.log(dictionary.search('dictionary'));
+console.log(dictionary.search('approach'));
+
 dictionary.add('apply');
 dictionary.add('apple');
 dictionary.add('application');
 dictionary.add('approach');
 
+console.log(dictionary.search('apply'));
+console.log(dictionary.search('apple'));
+console.log(dictionary.search('application'));
+console.log(dictionary.search('approach'));
 console.log(dictionary.autoComplete('app'));
+
+dictionary.remove('apply');
+
+console.log(dictionary.search('apply'));
