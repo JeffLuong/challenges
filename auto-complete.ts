@@ -1,7 +1,5 @@
 #!/usr/bin/env ts-node
 
-import { isObject } from './utils/object';
-
 /**
  * Create an auto-complete feature where given a string, you can get back
  * a list of potential words that may complete the string. For example:
@@ -14,14 +12,14 @@ import { isObject } from './utils/object';
  * available words.
  */
 
-class Node {
+class TNode {
   public end: boolean;
   public char?: string;
-  public children: Map<string, Node>;
+  public children: Map<string, TNode>;
 
   constructor(char?: string) {
     this.end = false;
-    this.children = new Map<string, Node>();
+    this.children = new Map<string, TNode>();
     if (char) {
       this.char = char;
     }
@@ -29,10 +27,10 @@ class Node {
 }
 
 class Trie {
-  private root: Node;
+  private root: TNode;
 
   constructor() {
-    this.root = new Node();
+    this.root = new TNode();
   }
 
   /**
@@ -40,7 +38,7 @@ class Trie {
    * @param charArray
    * @param node
    */
-  private findNode([char, ...rest]: string[], node: Node = this.root): Node | null {
+  private findNode([char, ...rest]: string[], node: TNode = this.root): TNode | null {
     if (char === undefined) {
       return node;
     }
@@ -61,7 +59,7 @@ class Trie {
    * @param node
    * @param str
    */
-  private getPossibleOptions(node: Node, str: string): string[] {
+  private getPossibleOptions(node: TNode, str: string): string[] {
     if (node.children.size === 0) {
       return [str];
     }
@@ -92,7 +90,7 @@ class Trie {
     for (const letter of word) {
       let node = children.get(letter);
       if (!node) {
-        node = new Node(letter);
+        node = new TNode(letter);
         children.set(letter, node);
       }
 
