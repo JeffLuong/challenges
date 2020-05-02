@@ -73,17 +73,15 @@ class Trie {
       return [str];
     }
 
-    const entries = node.children.entries();
     const options: string[] = [];
 
-    for (let i = 0; i < node.children.size; i++) {
-      const [char, nextNode] = entries.next().value;
+    node.children.forEach((nextNode, char) => {
       const args = [...this.getPossibleOptions(nextNode, `${str}${char}`)];
       if (node.end) {
         args.unshift(str);
       }
       options.push(...args);
-    };
+    });
 
     return options;
   }
