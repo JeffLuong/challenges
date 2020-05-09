@@ -1,19 +1,4 @@
 /**
- * Creates an array between min and max values with all positions filled with 0.
- * @param max
- * @param min
- */
-
-function fillCountArr(max: number, min: number): number[] {
-  const filled = [];
-
-  for (let i = min; i <= max; i++) {
-    filled[i] = 0;
-  }
-  return filled;
-}
-
-/**
  * Takes two arrays, and counts how many times they exist from one array in the other.
  * @param arr
  * @param counts
@@ -34,7 +19,7 @@ function countItems(arr: number[], counts: number[]): number[] {
 function countingSort(arr: number[]): number[] {
   const max = Math.max(...arr);
   const min = Math.min(...arr);
-  const counts = countItems(arr, fillCountArr(max, min));
+  const counts = countItems(arr, new Array(max + 1).fill(0));
   const sorted = [];
 
   for (let x = min; x <= max; x++) {
