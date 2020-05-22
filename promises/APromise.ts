@@ -6,13 +6,13 @@
  *   - instance.then()
  *   - instance.catch()
  *   - instance.finally()
+ *   - APromise.reject()
+ *   - APromise.resolve()
  * 
  * TODO - add support class level methods:
  *   - APromise.all()
  *   - APromise.allSettled()
  *   - APromise.race()
- *   - APromise.reject()
- *   - APromise.resolve()
  */
 
 type OnFulfilled = (value: any) => void;
@@ -26,34 +26,42 @@ type StateHandler = {
 };
 
 class APromise<V> {
-  static FULFILLED = 'fulfilled';
+  private static FULFILLED = 'fulfilled';
 
-  static REJECTED = 'rejected';
+  private static REJECTED = 'rejected';
 
-  static PENDING = 'pending';
+  private static PENDING = 'pending';
 
-  noop = () => {};
+  #noop = () => {};
 
-  __status = '';
+  #status = '';
 
-  __value?: V | Error = undefined;
+  #value?: V | Error = undefined;
 
-  __stateHandlers: StateHandler[] | null = [];
+  #stateHandlers: StateHandler[] | null = [];
 
-  constructor(callback: (resolve: APromise<V>['resolve'], reject: APromise<V>['reject']) => void) {
-    this.__status = APromise.PENDING;
-    callback(this.resolve.bind(this), this.reject.bind(this));
+  static resolve(value?: any) {
+    return new APromise(res => res(value));
+  }
+
+  static reject(value?: any) {
+    return new APromise((_, rej) => rej(value));
+  }
+
+  constructor(callback: (resolve: APromise<V>['resolveIt'], reject: APromise<V>['rejectIt']) => void) {
+    this.#status = APromise.PENDING;
+    callback(this.resolveIt.bind(this), this.rejectIt.bind(this));
   }
 
   protected __onStateChange(handler: StateHandler): void {
-    if (this.__status === APromise.PENDING) {
-      (this.__stateHandlers && this.__stateHandlers.push(handler));
+    if (this.#status === APromise.PENDING) {
+      (this.#stateHandlers && this.#stateHandlers.push(handler));
     } else {
-      if (this.__status === APromise.FULFILLED && typeof handler.onFulfilled === 'function') {
-        handler.onFulfilled(this.__value);
+      if (this.#status === APromise.FULFILLED && typeof handler.onFulfilled === 'function') {
+        handler.onFulfilled(this.#value);
       }
-      if (this.__status === APromise.REJECTED && typeof handler.onRejected === 'function') {
-        handler.onRejected(this.__value as Error);
+      if (this.#status === APromise.REJECTED && typeof handler.onRejected === 'function') {
+        handler.onRejected(this.#value as Error);
       }
       if (handler.onFinally && typeof handler.onFinally === 'function') {
         handler.onFinally();
@@ -69,13 +77,13 @@ class APromise<V> {
   }
 
   protected __fulfill(value?: V) {
-    this.__status = APromise.FULFILLED;
-    this.__value = value;
-    (this.__stateHandlers && this.__stateHandlers.forEach(this.__onStateChange.bind(this)));
-    this.__stateHandlers = null;
+    this.#status = APromise.FULFILLED;
+    this.#value = value;
+    (this.#stateHandlers && this.#stateHandlers.forEach(this.__onStateChange.bind(this)));
+    this.#stateHandlers = null;
   }
 
-  protected __resolve(then: APromise<V>['then'], res: APromise<V>['resolve'], rej: APromise<V>['reject']) {
+  protected __resolveIt(then: APromise<V>['then'], res: APromise<V>['resolveIt'], rej: APromise<V>['rejectIt']) {
     let done = false;
     try {
       then((value) => {
@@ -95,17 +103,36 @@ class APromise<V> {
   }
 
   get value() {
-    return this.__value;
+    return this.#value;
   }
 
   get status() {
-    return this.__status
+    return this.#status
   }
 
-  public done(onFulfilled: OnFulfilled, onRejected: OnRejected, onFinally?: OnFinally) {
+  private done(onFulfilled: OnFulfilled, onRejected: OnRejected, onFinally?: OnFinally) {
     setTimeout(() => {
       this.__onStateChange({ onFulfilled, onRejected, onFinally });
     }, 0);
+  }
+
+  private rejectIt(error: Error) {
+    this.#status = APromise.REJECTED;
+    this.#value = error;
+    (this.#stateHandlers && this.#stateHandlers.forEach(this.__onStateChange.bind(this)));
+    this.#stateHandlers = null;
+  }
+
+  private resolveIt(value?: V) {
+    try {
+      const then = this.__getThen(value);
+      if (then) {
+        this.__resolveIt(then.bind(value), this.resolveIt, this.rejectIt);
+      }
+      this.__fulfill(value)
+    } catch(e) {
+      this.rejectIt(e);
+    }
   }
 
   public then(onFulfilled: OnFulfilled, onRejected: OnRejected) {
@@ -142,7 +169,7 @@ class APromise<V> {
     const _this = this;
     return new APromise((resolve, reject) => {
       return _this.done(
-        this.noop,
+        this.#noop,
         (error: Error) => {
           if (typeof onRejected === 'function') {
             try {
@@ -160,10 +187,10 @@ class APromise<V> {
 
   public finally(onFinally: OnFinally) {
     const _this = this;
-    return new APromise((resolve: APromise<V>['resolve'], reject: APromise<V>['reject']) => {
+    return new APromise((resolve: APromise<V>['resolveIt'], reject: APromise<V>['rejectIt']) => {
       return _this.done(
-        this.noop,
-        this.noop,
+        this.#noop,
+        this.#noop,
         () => {
           if (typeof onFinally === 'function') {
             try {
@@ -178,24 +205,5 @@ class APromise<V> {
         }
       )
     });
-  }
-
-  public reject(error: Error) {
-    this.__status = APromise.REJECTED;
-    this.__value = error;
-    (this.__stateHandlers && this.__stateHandlers.forEach(this.__onStateChange.bind(this)));
-    this.__stateHandlers = null;
-  }
-
-  public resolve(value?: V) {
-    try {
-      const then = this.__getThen(value);
-      if (then) {
-        this.__resolve(then.bind(value), this.resolve, this.reject);
-      }
-      this.__fulfill(value)
-    } catch(e) {
-      this.reject(e);
-    }
   }
 }
