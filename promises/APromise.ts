@@ -8,15 +8,15 @@
  *   - instance.finally()
  *   - APromise.reject()
  *   - APromise.resolve()
+ *   - APromise.all()
  * 
  * TODO - add support class level methods:
- *   - APromise.all()
  *   - APromise.allSettled()
  *   - APromise.race()
  */
 
-type OnFulfilled = (value: any) => void;
-type OnRejected = (error: Error) => void;
+type OnFulfilled = (value: any) => any;
+type OnRejected = (error: Error) => any;
 type OnFinally = () => void;
 
 type StateHandler = {
@@ -46,6 +46,22 @@ class APromise<V> {
 
   static reject(value?: any) {
     return new APromise((_, rej) => rej(value));
+  }
+
+  static all(promises: APromise<any>[]): APromise<any[]> {
+    return new APromise<any[]>((res, rej) => {
+      const resolved: any[] = [];
+      let count = 0;
+      promises.forEach((p, i) => {
+        p.then(value => {
+          resolved[i] = value;
+          count += 1;
+          if (count === promises.length) {
+            res(resolved);
+          }
+        }).catch(e => rej(e));
+      });
+    });
   }
 
   constructor(callback: (resolve: APromise<V>['resolveIt'], reject: APromise<V>['rejectIt']) => void) {
@@ -116,7 +132,7 @@ class APromise<V> {
     }, 0);
   }
 
-  private rejectIt(error: Error) {
+  private rejectIt(error?: Error) {
     this.#status = APromise.REJECTED;
     this.#value = error;
     (this.#stateHandlers && this.#stateHandlers.forEach(this.__onStateChange.bind(this)));
@@ -135,7 +151,7 @@ class APromise<V> {
     }
   }
 
-  public then(onFulfilled: OnFulfilled, onRejected: OnRejected) {
+  public then(onFulfilled: OnFulfilled, onRejected?: OnRejected) {
     const _this = this;
     return new APromise((resolve, reject) => {
       return _this.done(
@@ -153,7 +169,7 @@ class APromise<V> {
         (error) => {
           if (typeof onRejected === 'function') {
             try {
-              return resolve(onRejected(error));
+              return reject(onRejected(error));
             } catch(e) {
               return reject(e);
             }
@@ -165,15 +181,16 @@ class APromise<V> {
     });
   }
 
-  public catch(onRejected: OnRejected) {
+  public catch(onRejected: OnRejected): any {
+    if (this.#status === APromise.FULFILLED) { return this.#value; }
     const _this = this;
-    return new APromise((resolve, reject) => {
+    return new APromise((_, reject) => {
       return _this.done(
         this.#noop,
         (error: Error) => {
           if (typeof onRejected === 'function') {
             try {
-              return resolve(onRejected(error));
+              return reject(onRejected(error));
             } catch(e) {
               return reject(e);
             }
