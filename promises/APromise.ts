@@ -1,5 +1,9 @@
 /**
- * A custom implementation of a promise class.
+ * A custom implementation of a Promise class.
+ *
+ * NOTE: Caveats to using class: some methods are not truly private 
+ * and therefore are exposed to the public.
+ *
  * Supports basic functionality available to JS Promises:
  *
  * Supports instance chaining methods:
