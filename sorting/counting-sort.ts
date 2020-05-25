@@ -30,3 +30,5 @@ function countingSort(arr: number[]): number[] {
   }
   return sorted;
 }
+
+export default countingSort;
