@@ -1,5 +1,3 @@
-import countingSort from './sorting/counting-sort';
-
 /**
  * Given a list of coin denominations (i.e. [1, 5, 10, 25]) and a total amount,
  * find the least number of coins that can make up the total. If there are no
@@ -25,43 +23,42 @@ import countingSort from './sorting/counting-sort';
  * Reason:
  * 15 can be made up using one coin of 3 and one coin of 12
  *
+ * Input:
+ * Denominations: [6, 8, 7, 19] and total is 4033
+ *
+ * Output:
+ * 214
+ *
+ * Reason:
+ * 4033 can be made up by 19 * 211 + 8 * 3
+ *
  * @param denominations
  * @param amount 
  */
 
 function countCoins(denominations: number[], amount: number): number {
-  if (denominations.length === 0) {
-    return -1;
-  }
+  // Create a cached array of numbers that represents the smallest number of coins
+  // required for each amount (index) of the array.
+  const table = Array(amount).fill(amount + 1);
+  // Add one more table slot into array which would be initialized as 0
+  table.unshift(0);
+  // Initialized array should look something like this:
+  // [0, amount+1, amount+1, amount+1, amount+1]
 
-  // Sort denominations as fast as possible
-  const denom = countingSort(denominations);
-  // Store total count possibilities (number of coins possible to make amount)
-  const totalCounts = [];
-
-  for (let i = denom.length - 1; i >= 0; i--) {
-    const den = denom[i];
-    // The num of times curr coin goes into amount (rounded down)
-    let count = Math.floor(amount / den);
-    // What the accumulated amount when using this denominator
-    let accum = count * den;
-
-    // If the this denominator divides evenly by this amount, push it
-    if (accum === amount) {
-      totalCounts.push(count);
-    } else {
-      // Or else, loop through the rest of the denominators
-      for (let j = i - 1; j >= 0; j--) {
-        while (accum + denom[j] <= amount) {
-          count += 1;
-          accum += denom[j];
-          if (accum === amount) {
-            totalCounts.push(count);
-            break;
-          }
-        }
+  for (let i = 1; i < table.length; i++) {
+    for (let j = 0; j < denominations.length; j++) {
+      const coin = denominations[j];
+      if (amount >= i && coin <= i) {
+        // Get the best cached number at table[i - coin] that has been solved
+        // i.e. if current amount (i) is 4 and coin number is 1, then best number at table[4-1]
+        // is table[3] which is 2
+        const bestNum = table[i - coin];
+        // Add the best number (2 coins) plus 1 coin to use (3)
+        const num = bestNum === 0 ? 1 : bestNum + 1;
+        // Get the smallest number of coins compared to it's current number
+        table[i] = Math.min(num, table[i]);
       }
     }
   }
-  return totalCounts.length ? Math.min(...totalCounts) : -1;
+  return table[table.length - 1];
 }
