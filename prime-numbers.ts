@@ -6,8 +6,10 @@
  */
 
 function isPrime(num: number): boolean {
-  // If number is even or less than 2, then they are not prime.
-  if ((num > 3 && num % 2 === 0) || num <= 1) {
+  if (num === 2) {
+    return true;
+  }
+  if (num <= 1 || num % 2 === 0) {
     return false;
   }
   // Loop through 3 to number, incrementing by 2 (since we already
