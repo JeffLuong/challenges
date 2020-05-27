@@ -1,4 +1,4 @@
-import { isObject } from './utils/object';
+import { isObject } from '../utils/object';
 
 /**
  * Takes an object and iterate through a path of keys to set a passed in value.

@@ -293,20 +293,3 @@ function splice(arr: any[], start: number, delCount: number = 0, insert: any): a
   }
   return spliceIt(arr, start, delCount, insert, 0);
 }
-
-/**
- * Recursively resolves each promise within the array and returns the final results.
- * @param {Promise} promiseArray
- */
-
-function promiseAll([curr, ...rest]: Promise<any>[]): Promise<any[]> {
-  if (curr === undefined) {
-    return Promise.resolve([]);
-  }
-
-  return Promise.resolve(curr).then(currRes => {
-    return promiseAll(rest).then(restRes => {
-      return [currRes, ...restRes];
-    });
-  });
-}
