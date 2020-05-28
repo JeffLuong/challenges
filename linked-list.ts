@@ -1,13 +1,16 @@
 /**
  * Implement a LinkedList class without using JavaScript’s built-in arrays ([]).
- * The LinkedList should support just 2 methods, add and has:
+ * The LinkedList should support just a few methods, add, has, first, last and toArray:
  *
  * let list = new LinkedList(1, 2, 3)
- * list.add(4) // undefined
- * list.add(5) // undefined
- * list.has(1) // true
- * list.has(4) // true
- * list.has(6) // false
+ * list.add(4)    // undefined
+ * list.add(5)    // undefined
+ * list.has(1)    // true
+ * list.has(4)    // true
+ * list.has(6)    // false
+ * list.first()   // { value: 1 }
+ * list.last()    // { value: 3 }
+ * list.toArray() // [1,2,3]
  */
 
 class Link<T> {
@@ -32,6 +35,9 @@ class Link<T> {
 class LinkedList<T> {
   has: (value: T) => boolean;
   add: (value: T) => void;
+  first: () => Link<T>;
+  last: () => Link<T>;
+  toArray: () => T[];
 
   constructor(...args: T[]) {
     if (!args.length) {
@@ -43,31 +49,37 @@ class LinkedList<T> {
 
     const findLink = (val: T) => {
       let curr: Link<T> | undefined = head;
-      let link = null;
 
       while (curr) {
         if (curr.value === val) {
-          link = curr;
           break;
         } else {
           curr = curr.next;
         }
       }
-      return link;
-    };
-
-    const findLast = () => {
-      let curr = head;
-
-      while (curr.next) {
-        curr = curr.next;
-      }
       return curr;
     };
 
     const addLink = (val: T) => {
-      const last = findLast();
+      const last = this.last();
       last.add(val);
+
+      this.last = () => last.next || head;
+    };
+
+    const reduce = () => {
+      const arr: T[] = [];
+      let curr = head;
+
+      while (curr) {
+        arr.push(curr.value);
+        if (curr.next) {
+          curr = curr.next;
+        } else {
+          break;
+        }
+      }
+      return arr;
     };
 
     // Method defined within constructor to privatize initial `value`
@@ -76,10 +88,16 @@ class LinkedList<T> {
       return Boolean(link && link.value === val);
     };
 
+    this.last = () => head;
+
     // Method defined within constructor to privatize initial `value`
     this.add = (val: T) => {
       addLink(val);
     };
+
+    this.first = () => head;
+
+    this.toArray = () => reduce();
 
     for (const val of values) {
       addLink(val);
