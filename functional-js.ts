@@ -227,6 +227,25 @@ function filter(func: ((c: any) => boolean), [current, ...rest]: any[]): any[] {
 }
 
 /**
+ * Takes an array and a depth to flatten and returns a new flattened array.
+ * @param {Arrat<any>}
+ * @param {Number} depth
+ */
+
+function flatten([curr, ...rest]: any[], depth: number = 1): any[] {
+  if (curr === undefined) {
+    return [];
+  }
+  if (!depth) {
+    return [curr, ...rest];
+  }
+  if (curr.constructor.name === 'Array') {
+    return [...flatten(curr, depth - 1), ...flatten(rest, depth)];
+  }
+  return [curr, ...flatten(rest, depth)];
+}
+
+/**
  * Takes an array, coerces all it's values and joins them utilizing a separator argument.
  * @param {Array} arr 
  * @param {String} joinVal 
