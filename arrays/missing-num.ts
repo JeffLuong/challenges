@@ -1,4 +1,4 @@
-import countingSort from './sorting/counting-sort';
+import countingSort from '../sorting/counting-sort';
 
 /**
  * Given an array of sequential numbers ranging from 1 to n,
