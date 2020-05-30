@@ -9,7 +9,7 @@
  * Output: 10
  *
  * Input substringIndex('abbcdabbbbbck', 'bbbck')
- * Output: 9
+ * Output: 8
  * 
  * @param str 
  * @param sub 
