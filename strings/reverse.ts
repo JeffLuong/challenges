@@ -5,7 +5,7 @@
  * @param str 
  */
 
-function reverse(str: string): string {
+function reverseStr(str: string): string {
   const chars = str.split('');
   const reversed = [];
 
