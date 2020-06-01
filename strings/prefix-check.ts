@@ -24,17 +24,26 @@
  *
  */
 
+const getError = (arg: any) => `Invalid type "${typeof arg}" passed into prefix checker. Prefix checker only takes an array of strings.`;
+
 // Greedy solution
 const greedyPrefixCheck: (s: string[]) => string = strings => {
   if (strings.length === 0) {
     return '';
   }
-
   let prefix = strings.shift();
+
+  if (typeof prefix !== 'string') {
+    throw new TypeError(getError(prefix));
+  }
 
   for (const string of strings) {
     if (string.length === 0) {
       return '';
+    }
+
+    if (typeof string !== 'string') {
+      throw new TypeError(getError(string));
     }
 
     // Check if string includes prefix - example:
@@ -77,6 +86,11 @@ const prefixCheckWithMap: (s: string[]) => string = strings => {
       return '';
     }
 
+    // console.log('STRING ---', typeof string);
+    if (typeof string !== 'string') {
+      throw new TypeError(getError(string));
+    }
+
     const letters = string.split('');
     let accumulated = '';
 
@@ -104,3 +118,5 @@ const prefixCheckWithMap: (s: string[]) => string = strings => {
   const highestCountIdx = counts.lastIndexOf(highestCount);
   return Object.keys(map)[highestCountIdx];
 };
+
+export { greedyPrefixCheck, prefixCheckWithMap };
