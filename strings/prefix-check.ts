@@ -86,7 +86,6 @@ const prefixCheckWithMap: (s: string[]) => string = strings => {
       return '';
     }
 
-    // console.log('STRING ---', typeof string);
     if (typeof string !== 'string') {
       throw new TypeError(getError(string));
     }
