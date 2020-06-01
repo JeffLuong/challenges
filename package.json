@@ -1,0 +1,27 @@
+{
+  "name": "challenges",
+  "version": "1.0.0",
+  "description": "Any coding challenges that I found fun or interesting to work on! Also includes some interesting scripts that I wrote over time.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JeffLuong/challenges.git"
+  },
+  "author": "Jeffrey Luong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JeffLuong/challenges/issues"
+  },
+  "homepage": "https://github.com/JeffLuong/challenges#readme",
+  "devDependencies": {
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
+    "@babel/preset-typescript": "^7.10.1",
+    "@types/jest": "^25.2.3",
+    "babel-jest": "^26.0.1",
+    "jest": "^26.0.1"
+  }
+}
