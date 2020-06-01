@@ -16,18 +16,24 @@
  */
 
 class HashMap {
+  get: (key: string) => any;
+
+  set: (key: string, value: any) => void;
+
+  entries: () => void;
+
   constructor() {
     // Using `Object.create()` with `null` to create a 'pure' data map
     // that doesn't inherit any object prototype properties.
     const map = Object.create(null);
     // Provided hashing function
-    const hashIt = (string) => {
+    const hashIt = (string: string): number => {
       return string
         .split('')
         .reduce((a, b) => ((a << 5) + a) + b.charCodeAt(0), 5381)
     };
 
-    this.get = (key) => {
+    this.get = (key: string) => {
       return map[hashIt(key)][1];
     };
 
@@ -37,7 +43,7 @@ class HashMap {
     //   '235196': ['key2', <value>],
     //   ...
     // }
-    this.set = (key, value) => {
+    this.set = (key: string, value: any) => {
       map[hashIt(key)] = [key, value];
     };
 
