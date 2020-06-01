@@ -28,7 +28,11 @@ function matchesLastStackChar(char: string, lastChar?: string): boolean {
 }
 
 function isBalanced(str: string): boolean {
-  if (!str || !str.length) {
+  if (typeof str !== 'string') {
+    throw new TypeError('isBalanced() requires string argument');
+  }
+
+  if (!str.length) {
     return false;
   }
 
@@ -43,8 +47,12 @@ function isBalanced(str: string): boolean {
         if (stack.length === 0) {
           return true;
         }
+      } else {
+        break;
       }
     }
   }
   return false;
 }
+
+export default isBalanced;
