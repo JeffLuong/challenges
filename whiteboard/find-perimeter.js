@@ -47,7 +47,7 @@ function calculatePerimeter(table, startPoint) {
     return checkedPoints[x] && checkedPoints[x][y];
   }
 
-  function findPerimeter(point, table) {
+  function findPerimeter(point) {
     const { x, y } = point;
 
     // Mark current point as checked.
@@ -83,7 +83,7 @@ function calculatePerimeter(table, startPoint) {
     return adjacents.reduce((a, p) => {
       // If the point is already checked, don't recursively evaluate.
       if (!isChecked(p.x, p.y)) {
-        a.push(...findPerimeter(p, table));
+        a.push(...findPerimeter(p));
       }
       return a;
     }, []);
