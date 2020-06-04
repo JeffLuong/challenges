@@ -35,13 +35,4 @@ function cachedFunc(fn: Function): CachedFunc {
   }
 }
 
-function greeter(name: string) {
-  return `Hi, ${name}`;
-}
-
-const greetPeople = cachedFunc(greeter);
-
-greetPeople('Mark'); // => 'Hi, Mark'
-greetPeople('Erin'); // => 'Hi, Erin'
-greetPeople('Jeff'); // => 'Hi, Jeff'
-greetPeople('Elle'); // => 'Hi, Elle'
+export default cachedFunc;
