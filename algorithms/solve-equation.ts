@@ -15,7 +15,7 @@
  * @param c
  */
 
-// O(n) solution
+// O(sqrt(n)) solution
 const solveEquation = (c: number): boolean => {
   // Find all squared values that are less than c
   for (let i = 0; i < c; i++) {
