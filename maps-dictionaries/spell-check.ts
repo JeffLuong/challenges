@@ -25,9 +25,7 @@
 function spellcheck(words: string[], str: string): string[] {
   const wordsInSent = str.split(' ');
   const misspelled = [];
-  const dic: {
-    [word: string]: { caseSensitive: boolean }
-  } = {};
+  const dic: { [word: string]: { caseSensitive: boolean } } = {};
 
   for (const word of words) {
     if (!dic[word]) {
