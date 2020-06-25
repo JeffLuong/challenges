@@ -31,10 +31,15 @@ const greedyPrefixCheck: (s: string[]) => string = strings => {
   if (strings.length === 0) {
     return '';
   }
+
   let prefix = strings.shift();
 
   if (typeof prefix !== 'string') {
     throw new TypeError(getError(prefix));
+  }
+
+  if (prefix.length === 0) {
+    return '';
   }
 
   for (const string of strings) {
@@ -49,7 +54,7 @@ const greedyPrefixCheck: (s: string[]) => string = strings => {
     // Check if string includes prefix - example:
     // skip if prefix = 'abcd' and string = 'abcde' <-- longest prefix is 'abcd'
     // loop if prefix = 'abcd' and string = 'abc'   <-- loop through this to find shorter prefix
-    if (prefix && !string.includes(prefix)) {
+    if (string.indexOf(prefix) < 0) {
       let curr = '';
       for (let i = 1; i <= string.length; i++) {
         const sliced = string.slice(0, i);
