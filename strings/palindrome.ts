@@ -3,6 +3,8 @@
  * (Palindrome is if a word, phrase, number, or other sequence
  * of characters which reads the same backward or forward)
  *
+ * Solution is O(n / 2) where n is the length of the string.
+ *
  * @param str
  */
 

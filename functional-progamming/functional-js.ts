@@ -12,7 +12,7 @@
  * @param {Array}
  */
 
-function head([first]: any[]): any {
+function head<T>([first]: T[]): T {
   return first;
 }
 
@@ -21,7 +21,7 @@ function head([first]: any[]): any {
  * @param {Array}
  */
 
-function tail([, ...rest]: any[]): any {
+function tail<T>([, ...rest]: T[]): T[] {
   return rest;
 }
 
@@ -31,12 +31,11 @@ function tail([, ...rest]: any[]): any {
  * @param {Array}
  */
 
-function map(func: (c: any, i: number) => any, arr: any[]): any {
+function map<A, T>(func: (c: A, i: number) => T, arr: A[]): T[] {
   const mapIt = ([current, ...rest]: any[], idx: number): any[] => {
-    if (current === undefined) {
-      return [];
-    }
-    return [func(current, idx), ...mapIt([...rest], idx + 1)];
+    return current === undefined
+      ? []
+      : [func(current, idx), ...mapIt([...rest], idx + 1)];
   };
   return mapIt(arr, 0);
 }
@@ -47,7 +46,7 @@ function map(func: (c: any, i: number) => any, arr: any[]): any {
  * @param {Array}
  */
 
-function len([current, ...rest]: any[]): number {
+function len<T>([current, ...rest]: T[]): number {
   if (current === undefined) {
     return 0;
   }
@@ -63,25 +62,36 @@ function len([current, ...rest]: any[]): number {
  * @param {*} initial 
  */
 
-function reduce(func: (acc: any, val: any) => any, [curr, ...rest]: any[], init: any = []): any {
+function reduce<U, T>(func: (acc: T, val: U) => T, [curr, ...rest]: U[], init: T): T {
   if (curr === undefined) {
-    return init
+    return init;
   }
   return reduce(func, rest, func(init, curr));
 }
 
+type IterableType<T> = T[] | string;
+
 /**
  * Takes an array and reverses the order of it. Extract first `current` value and
  * recursively calls `reverse` until there are no more values.
- * @param {Array}
- * @returns {Array} new array
+ * @param {IterableType<T>}
+ * @returns {IterableType<T>} new array
  */
 
-function reverse([current, ...rest]: any[]): any[] {
-  if (current === undefined) {
-    return [];
+function reverse<T>(iterable: IterableType<T>): IterableType<T> {
+  if (typeof iterable === 'string') {
+    const [current, ...rest] = iterable;
+
+    return current === undefined
+      ? ''
+      : `${reverse<string>(rest.join(''))}${current}`;
   }
-  return [...reverse(rest), current];
+
+  const [current, ...rest] = iterable;
+
+  return current === undefined
+    ? []
+    : [...reverse<T>(rest) as T[], current];
 }
 
 /**
@@ -90,7 +100,7 @@ function reverse([current, ...rest]: any[]): any[] {
  */
 
 function pop(arr: any[]): any {
-  return head(reverse(arr));
+  return head(reverse(arr) as any[]);
 }
 
 /**
@@ -156,7 +166,7 @@ function first([current, ...rest]: any[], num: number = 1): any[] {
  */
 
 function last(arr: any[], num: number = 1): any[] {
-  return first(reverse(arr), num);
+  return first(reverse(arr) as any[], num);
 }
 
 /**
@@ -189,10 +199,7 @@ function swap(arr: any[], idx1: number, idx2: number): any[] {
     if (i === idx1) {
       return arr[idx2];
     }
-    if (i === idx2) {
-      return arr[idx1];
-    }
-    return c;
+    return i === idx2 ? arr[idx1] : c;
   }, arr);
 }
 

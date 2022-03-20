@@ -4,19 +4,23 @@ import countingSort from '../sorting/counting-sort';
  * Given an array of sequential numbers ranging from 1 to n,
  * and one number missing within the array, find that missing number.
  *
+ * input = [1,2,3,4,6,7,8,9,10]
+ *
  * @param arr
  */
 
 // O(n) solution:
 function missingNum(arr: number[]): number {
-  const n = arr.length + 1;
-  let expectedSum = n * (n + 1) / 2;
-  let sum = 0;
+  const n = arr.length + 1; // add 1 because it's missing 1 number
+  const expectedSum = n * (n + 1) / 2; // 55
+  const sum = arr.reduce((acc, curr) => acc + curr, 0);
+  const missing = expectedSum - sum;
 
-  for (let i = 0; i < arr.length; i++) {
-    sum += arr[i];
+  // If missing num is "next" num in array, that means there's no num missing
+  if (missing >= arr[arr.length - 1]) {
+    return -1;
   }
-  return expectedSum - sum;
+  return missing;
 }
 
 // Brute force using countingSort()

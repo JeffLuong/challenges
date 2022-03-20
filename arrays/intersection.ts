@@ -13,7 +13,23 @@ function intersection(arr1: any[], arr2: any[], allowDupes = false): any[] {
 
   if (allowDupes) {
     return intersects;
-  } else {
-    return Array.from(new Set(intersects));
   }
+  return Array.from(new Set(intersects));
+}
+
+function bruteIntersection(arr1: any[], arr2: any[], allowDupes = false): any[] {
+  const intersects: any[] = [];
+
+  arr1.forEach(value => {
+    arr2.forEach(_value => {
+      if (value === _value) {
+        intersects.push(value);
+      }
+    });
+  });
+
+  if (allowDupes) {
+    return intersects;
+  }
+  return Array.from(new Set(intersects));
 }

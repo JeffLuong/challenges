@@ -27,15 +27,12 @@ class HashMap {
     // that doesn't inherit any object prototype properties.
     const map = Object.create(null);
     // Provided hashing function
-    const hashIt = (string: string): number => {
-      return string
+    const hashIt = (string: string): number =>
+      string
         .split('')
-        .reduce((a, b) => ((a << 5) + a) + b.charCodeAt(0), 5381)
-    };
+        .reduce((a, b) => ((a << 5) + a) + b.charCodeAt(0), 5381);
 
-    this.get = (key: string) => {
-      return map[hashIt(key)][1];
-    };
+    this.get = (key: string) => map[hashIt(key)][1];
 
     // Structure of the hash is:
     // {
@@ -52,7 +49,6 @@ class HashMap {
       for (const entry in map) {
         yield map[entry];
       }
-      return entry;
     };
   }
 }

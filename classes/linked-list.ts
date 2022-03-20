@@ -11,6 +11,7 @@
  * list.first()   // { value: 1 }
  * list.last()    // { value: 3 }
  * list.toArray() // [1,2,3]
+ * list.reverse() // [3,2,1]
  */
 
 class Link<T> {
@@ -33,10 +34,12 @@ class Link<T> {
 }
 
 class LinkedList<T> {
-  has: (value: T) => boolean;
   add: (value: T) => void;
-  first: () => Link<T>;
-  last: () => Link<T>;
+  deleteNode: (nth: number) => void;
+  first: () => Link<T> | undefined;
+  has: (value: T) => boolean;
+  last: () => Link<T> | undefined;
+  reverse: () => LinkedList<T>;
   toArray: () => T[];
 
   constructor(...args: T[]) {
@@ -47,8 +50,8 @@ class LinkedList<T> {
     const [value, ...values] = args;
     const head = new Link<T>(value);
 
-    const findLink = (val: T) => {
-      let curr: Link<T> | undefined = head;
+    const findLink = (val: T, startNode: Link<T>) => {
+      let curr: Link<T> | undefined = startNode;
 
       while (curr) {
         if (curr.value === val) {
@@ -62,19 +65,19 @@ class LinkedList<T> {
 
     const addLink = (val: T) => {
       const last = this.last();
-      last.add(val);
+      last?.add(val);
 
-      this.last = () => last.next || head;
+      this.last = () => last?.next || head;
     };
 
-    const reduce = () => {
+    const reduce = (curr: Link<T>) => {
       const arr: T[] = [];
-      let curr = head;
+      let tmp = curr;
 
-      while (curr) {
-        arr.push(curr.value);
-        if (curr.next) {
-          curr = curr.next;
+      while (tmp) {
+        arr.push(tmp.value);
+        if (tmp.next) {
+          tmp = tmp.next;
         } else {
           break;
         }
@@ -82,23 +85,67 @@ class LinkedList<T> {
       return arr;
     };
 
-    // Method defined within constructor to privatize initial `value`
-    this.has = (val: T) => {
-      const link = findLink(val);
+    const hasVal = (val: T, startNode: Link<T>) => {
+      const link = findLink(val, startNode);
       return Boolean(link && link.value === val);
     };
 
-    this.last = () => head;
+    const deleteNode = (nth: number, startNode?: Link<T>) => {
+      if (!startNode) {
+        return;
+      }
 
-    // Method defined within constructor to privatize initial `value`
-    this.add = (val: T) => {
-      addLink(val);
+      let tmp: Link<T> | undefined = startNode;
+
+      if (nth === 0) {
+        this.first = () => tmp?.next;
+        tmp = undefined;
+        return;
+      }
+
+      let counter = 0;
+
+      while (counter !== nth - 1 && tmp) {
+        if (!tmp || !tmp.next) {
+          return;
+        }
+
+        counter++;
+        tmp = tmp.next;
+      }
+  
+      tmp.next = tmp.next?.next;
     };
 
+    // Class method definitions:
+    this.has = (val: T) => hasVal(val, head);
+    this.last = () => head;
+    this.add = (val: T) => addLink(val);
     this.first = () => head;
+    this.toArray = () => reduce(head);
+    this.deleteNode = (nth: number) => deleteNode(nth, head);
+    this.reverse = () => {
+      let curr: Link<T> | undefined = head;
+      let prev: Link<T> | undefined = undefined;
+      let next = curr.next;
 
-    this.toArray = () => reduce();
+      while(curr) {
+        next = curr.next;
+        curr.next = prev;
+        prev = curr;
+        curr = next;
+      }
 
+      // Redefine class methods due to `reverse` of linked list
+      this.first = () => prev as Link<T>;
+      this.last = () => head;
+      this.toArray = () => reduce(prev as Link<T>);
+      this.has = (val: T) => hasVal(val, prev as Link<T>);
+      this.deleteNode = (nth: number) => deleteNode(nth, prev);
+      return this;
+    }
+
+    // Initialize linked list
     for (const val of values) {
       addLink(val);
     }

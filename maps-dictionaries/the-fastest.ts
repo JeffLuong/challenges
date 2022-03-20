@@ -24,11 +24,35 @@
 
 type Times = [number[]];
 
+type FastestRouteTime = [string, number];
+
 type RouteMap = {
   [routeId: string]: {
-    [courierId: string]: number[]
-  }
+    [courierId: string]: number[];
+  };
 };
+
+type CourierTimes = {
+  [courierId: string]: {
+    [routeId: string]: number[];
+  };
+};
+
+function createCourierTimesMap(arr: Times) {
+  return arr.reduce((a: CourierTimes, c: number[]): CourierTimes => {
+    const [rouId, courId, time] = c;
+    if (a[courId]) {
+      if (a[courId][rouId]) {
+        a[courId][rouId].push(time);
+      } else {
+        a[courId][rouId] = [time];
+      }
+    } else {
+      a[courId] = { [rouId]: [time] };
+    }
+    return a;
+  }, {});
+}
 
 function createRouteTimesMap(arr: Times) {
   return arr.reduce((a: RouteMap, c: number[]): RouteMap => {
@@ -51,7 +75,7 @@ function getFastestByRoute(arr: Times) {
   // Return only the route and the fastest time for each route.
   return Object.keys(routes).map(a => {
     const times = Object.values(routes[a]).flat(2);
-    return [a, Math.min(...times)];
+    return [a, Math.min(...times)] as FastestRouteTime;
   });
 }
 
@@ -73,19 +97,25 @@ function getFastestByRoute(arr: Times) {
 //     [2, 1, 25.5],
 //     [2, 2, 9.5]
 //   ]
-//   Explanation: Courier 1 has two delivery times for route 1, 20 and 22 the average of which is (20 + 22) / 2 = 21. Repeating this process for each courier and route we get the results above. 
+//   Explanation: Courier 1 has two delivery times for route 1, 20 and 22 the average of which is (20 + 22) / 2 = 21. Repeating this process for each courier and route we get the results above.
+
+type AverageTimesByCourier = [string, string, number][]; // [courierId, routeId, time]
 
 function getAveragesForCouriers(arr: Times) {
-  const routes = createRouteTimesMap(arr);
+  const courierTimes = createCourierTimesMap(arr);
   const averageTimes = [];
 
-  for (const id in routes) {
-    const courIds = Object.keys(routes[id]);
-    const averages = courIds.reduce((a: (string | number)[][], cId) => {
-      const times = routes[id][cId];
-      const sum = times.reduce((sum, curr) => sum + curr, 0);
-      return [...a, [id, cId, sum/times.length]];
-    }, []);
+  for (const id in courierTimes) {
+    const courRoutes = courierTimes[id];
+    const averages = Object.entries(courRoutes).reduce(
+      (acc: AverageTimesByCourier, routeTimes: [string, number[]]) => {
+        const [rouId, times] = routeTimes;
+        const total = times.reduce((sum, time) => sum + time, 0);
+        const updated: AverageTimesByCourier = [...acc, [id, rouId, total / times.length]];
+        return updated;
+      },
+      []
+    );
     averageTimes.push(...averages);
   }
   return averageTimes;

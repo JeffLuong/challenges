@@ -44,4 +44,31 @@ function groupAnagrams(words: string[]): string[][] {
   return Object.values(grouped);
 }
 
-export default groupAnagrams;
+/**
+ * Takes 2 string parameters and returns boolean whether or not they are anagrams.
+ *
+ * Questions:
+ *   - Should we care about case sensitivity?
+ *   - Should we always expect strings to have a length?
+ *   - Should we always expect parameters to be strings?
+ *
+ * @param str1 
+ * @param str2 
+ * @returns 
+ */
+
+function isAnagram(str1: string, str2: string): boolean {
+  if (typeof str1 !== 'string' || typeof str2 !== 'string') {
+    throw new TypeError('Function isAnagram() must take 2 string parameters');
+  }
+
+  if (str1.length !== str2.length) {
+    return false;
+  }
+
+  const sortedStr1 = str1.toLowerCase().split('').sort().join('');
+  const sortedStr2 = str2.toLowerCase().split('').sort().join('');
+  return sortedStr1 === sortedStr2;
+}
+
+export default { groupAnagrams, isAnagram };

@@ -7,7 +7,7 @@ import { isObject } from '../utils/object';
  * @param {String} path
  * @param {any} value
  */
-function setDeep(obj: object, path: string, value: any): object {
+export function setDeep(obj: object, path: string, value: any): object {
   const keys = path.split('.');
   const lastKey = keys.pop();
   // Create copy of object

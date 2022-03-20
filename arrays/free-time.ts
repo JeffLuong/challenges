@@ -9,8 +9,9 @@
  *
  * Example:
  * start of day hour: 9 (9AM)
- * end of day hour: 18 (6PM)
+ * end of day hour:   18 (6PM)
  * meetings = [
+ *   [8, 10],  // 2 hour meeting
  *   [9, 11],  // 2 hour meeting
  *   [10, 12], // 2 hour meeting with 1 hour overlap with previous meeting
  *   [13, 15], // 2 hour meeting
@@ -26,7 +27,7 @@ type Meeting = [number, number];
 type Meetings = Meeting[];
 
 function recursiveGetFreeTime(
-  [curr, ...rest]: Meetings,
+  [curr, ...restOfMeetings]: Meetings,
   dayStart: number,
   dayEnd: number,
   maxEnd = 0,
@@ -55,7 +56,7 @@ function recursiveGetFreeTime(
     free -= Math.max(maxEnd, end) - start - deduct;
     maxEnd = end;
   }
-  return recursiveGetFreeTime(rest, dayStart, dayEnd, maxEnd, free);
+  return recursiveGetFreeTime(restOfMeetings, dayStart, dayEnd, maxEnd, free);
 }
 
 

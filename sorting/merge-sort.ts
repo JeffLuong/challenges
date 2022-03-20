@@ -68,6 +68,6 @@ function sortIt(arr: number[][], lastUnit?: number[]): number[] {
  * @param arr
  */
 
-function mergeSort(arr: number[]): number[] {
+export function mergeSort(arr: number[]): number[] {
   return sortIt(splitIt(arr));
 }
